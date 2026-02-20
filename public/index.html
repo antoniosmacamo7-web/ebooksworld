@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{SITE_NAME}} - Digital Ebooks & Guides</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+      color: #e8e8e8;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .logo { font-size: 1.5rem; font-weight: 700; color: #4fc3f7; letter-spacing: -0.5px; }
+    .tagline { font-size: 0.85rem; color: #8b9dc3; margin-top: 0.25rem; }
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    .subtitle {
+      color: #8b9dc3;
+      margin-bottom: 2.5rem;
+      font-size: 1rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .card:hover {
+      border-color: rgba(79,195,247,0.3);
+      transform: translateY(-2px);
+    }
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .card h3 { font-size: 1.1rem; margin-bottom: 0.4rem; color: #fff; }
+    .card p { font-size: 0.85rem; color: #aab; margin-bottom: 0.75rem; }
+    .card .price { font-size: 1.1rem; font-weight: 700; color: #4fc3f7; }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #6b7a99;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">{{SITE_NAME}}</div>
+    <div class="tagline">Digital ebooks & guides for personal growth</div>
+  </header>
+  <main>
+    <h1>Popular Ebooks</h1>
+    <p class="subtitle">Instant download • PDF & EPUB • Best sellers</p>
+    <div class="grid">
+      <div class="card">
+        <div class="card-icon">📚</div>
+        <h3>Personal Development Ebook</h3>
+        <p>Master your habits and achieve your goals. Bestseller with 50+ actionable strategies.</p>
+        <span class="price">$29.99</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">💰</div>
+        <h3>Financial Freedom Ebook</h3>
+        <p>Build wealth step by step. Passive income, budgeting, and investment basics.</p>
+        <span class="price">$39.99</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">📈</div>
+        <h3>Digital Marketing Guide</h3>
+        <p>SEO, social media, and email marketing. Everything you need to grow online.</p>
+        <span class="price">$34.99</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧘</div>
+        <h3>Health & Wellness Ebook</h3>
+        <p>Nutrition, fitness, and mindfulness. Your complete wellness roadmap.</p>
+        <span class="price">$27.99</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h3>Productivity Masterclass</h3>
+        <p>2x your output. Time management, focus, and workflow optimization.</p>
+        <span class="price">$44.99</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧠</div>
+        <h3>Mindfulness & Meditation Guide</h3>
+        <p>Reduce stress and improve clarity. Simple techniques for busy lives.</p>
+        <span class="price">$24.99</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🚀</div>
+        <h3>Entrepreneurship Blueprint</h3>
+        <p>Start and scale your business. From idea to launch in 90 days.</p>
+        <span class="price">$49.99</span>
+      </div>
+    </div>
+  </main>
+  <footer>
+    © {{SITE_NAME}}. Digital products. All rights reserved.
+  </footer>
+</body>
+</html>
