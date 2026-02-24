@@ -31,8 +31,25 @@
     }
     .subtitle {
       color: #8b9dc3;
-      margin-bottom: 2.5rem;
+      margin-bottom: 1.5rem;
       font-size: 1rem;
+    }
+    .payments {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(0,112,186,0.15);
+      border: 1px solid rgba(0,112,186,0.4);
+      color: #cfd8dc;
+      font-size: 0.8rem;
+      margin-bottom: 2rem;
+    }
+    .payments-logo {
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: #ffb300;
     }
     .grid {
       display: grid;
@@ -63,7 +80,60 @@
     }
     .card h3 { font-size: 1.1rem; margin-bottom: 0.4rem; color: #fff; }
     .card p { font-size: 0.85rem; color: #aab; margin-bottom: 0.75rem; }
-    .card .price { font-size: 1.1rem; font-weight: 700; color: #4fc3f7; }
+    .card .price { font-size: 1.1rem; font-weight: 700; color: #4fc3f7; display: block; margin-bottom: 0.75rem; }
+    .card .cta {
+      margin-top: 0.25rem;
+    }
+    .paypal-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      width: 100%;
+      padding: 0.55rem 0.9rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #0070ba 0%, #1546a0 100%);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(0,112,186,0.45);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .paypal-button span.logo {
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+    .paypal-button span.logo-highlight {
+      color: #ffb300;
+    }
+    .paypal-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(0,112,186,0.6);
+      background: linear-gradient(135deg, #0083d0 0%, #1852b0 100%);
+    }
+    .paypal-button:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 14px rgba(0,112,186,0.5);
+    }
+    .status-banner {
+      margin-bottom: 1.5rem;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+    .status-banner.success {
+      background: rgba(56, 142, 60, 0.12);
+      border: 1px solid rgba(56, 142, 60, 0.4);
+      color: #c8e6c9;
+    }
+    .status-banner.error {
+      background: rgba(229, 57, 53, 0.12);
+      border: 1px solid rgba(229, 57, 53, 0.4);
+      color: #ffcdd2;
+    }
     footer {
       text-align: center;
       padding: 2rem;
@@ -80,53 +150,201 @@
   <main>
     <h1>Popular Ebooks</h1>
     <p class="subtitle">Instant download • PDF & EPUB • Best sellers</p>
+    <div id="status-banner" class="status-banner" style="display:none;"></div>
+    <div class="payments">
+      <span>Secure payments processed by</span>
+      <span class="payments-logo">Pay<span style="color:#0070ba;">Pal</span></span>
+    </div>
     <div class="grid">
-      <div class="card">
+      <div class="card" data-name="Personal Development Ebook" data-price="25">
         <div class="card-icon">📚</div>
         <h3>Personal Development Ebook</h3>
         <p>Master your habits and achieve your goals. Bestseller with 50+ actionable strategies.</p>
-        <span class="price">$29.99</span>
+        <span class="price">$25</span>
+        <div class="cta">
+          <button class="paypal-button">
+            <span>Buy with</span>
+            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
+          </button>
+        </div>
       </div>
-      <div class="card">
+      <div class="card" data-name="Financial Freedom Ebook" data-price="30">
         <div class="card-icon">💰</div>
         <h3>Financial Freedom Ebook</h3>
         <p>Build wealth step by step. Passive income, budgeting, and investment basics.</p>
-        <span class="price">$39.99</span>
+        <span class="price">$30</span>
+        <div class="cta">
+          <button class="paypal-button">
+            <span>Buy with</span>
+            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
+          </button>
+        </div>
       </div>
-      <div class="card">
+      <div class="card" data-name="Digital Marketing Guide" data-price="35">
         <div class="card-icon">📈</div>
         <h3>Digital Marketing Guide</h3>
         <p>SEO, social media, and email marketing. Everything you need to grow online.</p>
-        <span class="price">$34.99</span>
+        <span class="price">$35</span>
+        <div class="cta">
+          <button class="paypal-button">
+            <span>Buy with</span>
+            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
+          </button>
+        </div>
       </div>
-      <div class="card">
+      <div class="card" data-name="Health & Wellness Ebook" data-price="40">
         <div class="card-icon">🧘</div>
         <h3>Health & Wellness Ebook</h3>
         <p>Nutrition, fitness, and mindfulness. Your complete wellness roadmap.</p>
-        <span class="price">$27.99</span>
+        <span class="price">$40</span>
+        <div class="cta">
+          <button class="paypal-button">
+            <span>Buy with</span>
+            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
+          </button>
+        </div>
       </div>
-      <div class="card">
+      <div class="card" data-name="Productivity Masterclass" data-price="45">
         <div class="card-icon">⚡</div>
         <h3>Productivity Masterclass</h3>
         <p>2x your output. Time management, focus, and workflow optimization.</p>
-        <span class="price">$44.99</span>
+        <span class="price">$45</span>
+        <div class="cta">
+          <button class="paypal-button">
+            <span>Buy with</span>
+            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
+          </button>
+        </div>
       </div>
-      <div class="card">
+      <div class="card" data-name="Mindfulness & Meditation Guide" data-price="55">
         <div class="card-icon">🧠</div>
         <h3>Mindfulness & Meditation Guide</h3>
         <p>Reduce stress and improve clarity. Simple techniques for busy lives.</p>
-        <span class="price">$24.99</span>
+        <span class="price">$55</span>
+        <div class="cta">
+          <button class="paypal-button">
+            <span>Buy with</span>
+            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
+          </button>
+        </div>
       </div>
-      <div class="card">
+      <div class="card" data-name="Entrepreneurship Blueprint" data-price="60">
         <div class="card-icon">🚀</div>
         <h3>Entrepreneurship Blueprint</h3>
         <p>Start and scale your business. From idea to launch in 90 days.</p>
-        <span class="price">$49.99</span>
+        <span class="price">$60</span>
+        <div class="cta">
+          <button class="paypal-button">
+            <span>Buy with</span>
+            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
+          </button>
+        </div>
+      </div>
+      <!-- Extra ebooks -->
+      <div class="card" data-name="AI & Automation Playbook" data-price="65">
+        <div class="card-icon">🤖</div>
+        <h3>AI & Automation Playbook</h3>
+        <p>Learn how to use AI tools to automate work, save time, and boost your income.</p>
+        <span class="price">$65</span>
+        <div class="cta">
+          <button class="paypal-button">
+            <span>Buy with</span>
+            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
+          </button>
+        </div>
+      </div>
+      <div class="card" data-name="Crypto & Web3 Starter Kit" data-price="60">
+        <div class="card-icon">🪙</div>
+        <h3>Crypto & Web3 Starter Kit</h3>
+        <p>Understand blockchain, NFTs, and DeFi with simple explanations and step-by-step guides.</p>
+        <span class="price">$60</span>
+        <div class="cta">
+          <button class="paypal-button">
+            <span>Buy with</span>
+            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
+          </button>
+        </div>
+      </div>
+      <div class="card" data-name="High Ticket Sales Scripts" data-price="65">
+        <div class="card-icon">📞</div>
+        <h3>High Ticket Sales Scripts</h3>
+        <p>Ready-to-use scripts and templates to close high-ticket clients in chat or call.</p>
+        <span class="price">$65</span>
+        <div class="cta">
+          <button class="paypal-button">
+            <span>Buy with</span>
+            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
+          </button>
+        </div>
       </div>
     </div>
   </main>
   <footer>
     © {{SITE_NAME}}. Digital products. All rights reserved.
   </footer>
+  <script>
+    (function() {
+      function parseStatusFromUrl() {
+        try {
+          var params = new URLSearchParams(window.location.search || '');
+          return params.get('status');
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function showStatusBanner() {
+        var status = parseStatusFromUrl();
+        var banner = document.getElementById('status-banner');
+        if (!banner || !status) return;
+
+        if (status === 'success') {
+          banner.textContent = 'Payment completed successfully. Your ebook will be delivered to the email or platform you configured.';
+          banner.classList.add('success');
+          banner.style.display = 'block';
+        } else if (status === 'cancel') {
+          banner.textContent = 'Payment was cancelled. You can try again at any time.';
+          banner.classList.add('error');
+          banner.style.display = 'block';
+        }
+      }
+
+      function buildCheckoutUrl(price, name) {
+        var origin = window.location.origin;
+        var path = window.location.pathname || '/';
+        var baseReturn = origin + path;
+        var successUrl = baseReturn + '?status=success';
+        var cancelUrl = baseReturn + '?status=cancel';
+
+        var params = new URLSearchParams();
+        params.set('amount', String(price));
+        params.set('currency', 'USD');
+        params.set('success_url', successUrl);
+        params.set('cancel_url', cancelUrl);
+        params.set('product_name', name || 'Digital Ebook');
+
+        return '/api/paypal-checkout?' + params.toString();
+      }
+
+      function attachPayPalHandlers() {
+        var cards = document.querySelectorAll('.card');
+        cards.forEach(function(card) {
+          var button = card.querySelector('.paypal-button');
+          if (!button) return;
+
+          button.addEventListener('click', function() {
+            var name = card.getAttribute('data-name') || 'Digital Ebook';
+            var price = card.getAttribute('data-price');
+            if (!price) return;
+            var url = buildCheckoutUrl(price, name);
+            window.location.href = url;
+          });
+        });
+      }
+
+      showStatusBanner();
+      attachPayPalHandlers();
+    })();
+  </script>
 </body>
 </html>

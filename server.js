@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 3001;
-const SITE_NAME = process.env.SITE_NAME || 'Readify Books';
+const SITE_NAME = 'Ebooks Sales';
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -86,6 +86,17 @@ app.get('/api/paypal-checkout', (req, res) => {
     .amount { font-size: 2rem; font-weight: 700; color: #4fc3f7; margin-bottom: 1.5rem; text-align: center; }
     #paypal-button-container { margin-top: 0.5rem; }
     .loading { text-align: center; color: #888; margin-top: 0.5rem; font-size: 0.9rem; }
+    .security-notice {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: rgba(79,195,247,0.1);
+      border-left: 3px solid #4fc3f7;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      color: #aab;
+      line-height: 1.4;
+    }
+    .security-notice strong { color: #8b9dc3; }
   </style>
   <script>
     (function(){
@@ -103,6 +114,9 @@ app.get('/api/paypal-checkout', (req, res) => {
     <div class="amount">$${parseFloat(amount).toFixed(2)} ${currency}</div>
     <div id="paypal-button-container"></div>
     <div class="loading" id="loading">Loading PayPal...</div>
+    <div class="security-notice">
+      <strong>Security Notice:</strong> For security reasons, the payment may appear under a different merchant name on your statement.
+    </div>
   </div>
   <script>
     (function(){
