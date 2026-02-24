@@ -9,7 +9,6 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const SITE_NAME = 'Ebooks Sales';
 
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
 // Landing page (dinâmica com SITE_NAME)
@@ -22,6 +21,9 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
   }
 });
+
+// Arquivos estáticos (CSS, imagens, etc.)
+app.use(express.static(path.join(__dirname, 'public')));
 
 // PayPal Checkout - máscara para o checkout (PayPal vê este domínio como merchant)
 app.get('/api/paypal-checkout', (req, res) => {
