@@ -284,24 +284,57 @@
   </footer>
   <script>
     (function() {
+      // Será substituído no servidor pelo valor do .env (TELEGRAM_USERNAME)
+      var TELEGRAM_USERNAME = '{{TELEGRAM_USERNAME}}' || '';
+
       function parseStatusFromUrl() {
         try {
           var params = new URLSearchParams(window.location.search || '');
-          return params.get('status');
+          return {
+            status: params.get('status'),
+            productName: params.get('product_name'),
+            amount: params.get('amount')
+          };
         } catch (e) {
-          return null;
+          return { status: null, productName: null, amount: null };
         }
       }
 
+      function redirectToTelegram(info) {
+        if (!TELEGRAM_USERNAME || info.status !== 'success') return;
+
+        var name = info.productName || 'Digital Ebook';
+        var amount = info.amount || '';
+
+        var lines = [
+          '🎉 Payment successful!',
+          '',
+          '✅ Product: ' + name,
+          amount ? '💰 Amount: $' + amount : '',
+          '',
+          'Please provide me access to the product.'
+        ].filter(Boolean);
+
+        var text = lines.join('\n');
+        var url = 'https://t.me/' + TELEGRAM_USERNAME.replace('@', '') + '?text=' + encodeURIComponent(text);
+
+        // Pequena pausa para o usuário ver o banner antes de ir para o Telegram
+        setTimeout(function() {
+          window.location.href = url;
+        }, 800);
+      }
+
       function showStatusBanner() {
-        var status = parseStatusFromUrl();
+        var info = parseStatusFromUrl();
+        var status = info.status;
         var banner = document.getElementById('status-banner');
         if (!banner || !status) return;
 
         if (status === 'success') {
-          banner.textContent = 'Payment completed successfully. Your ebook will be delivered to the email or platform you configured.';
+          banner.textContent = 'Payment completed successfully. You will now be redirected to Telegram to confirm your order.';
           banner.classList.add('success');
           banner.style.display = 'block';
+          redirectToTelegram(info);
         } else if (status === 'cancel') {
           banner.textContent = 'Payment was cancelled. You can try again at any time.';
           banner.classList.add('error');
@@ -313,7 +346,13 @@
         var origin = window.location.origin;
         var path = window.location.pathname || '/';
         var baseReturn = origin + path;
-        var successUrl = baseReturn + '?status=success';
+
+        // Inclui o nome do produto e o valor na URL de retorno
+        var successUrl = baseReturn
+          + '?status=success'
+          + '&product_name=' + encodeURIComponent(name || 'Digital Ebook')
+          + '&amount=' + encodeURIComponent(String(price));
+
         var cancelUrl = baseReturn + '?status=cancel';
 
         var params = new URLSearchParams();

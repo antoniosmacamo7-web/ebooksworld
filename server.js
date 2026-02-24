@@ -8,6 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 3001;
 const SITE_NAME = 'Ebooks Sales';
+const TELEGRAM_USERNAME = process.env.TELEGRAM_USERNAME || '';
 
 app.use(express.json());
 
@@ -15,7 +16,9 @@ app.use(express.json());
 app.get('/', (req, res) => {
   try {
     const html = readFileSync(path.join(__dirname, 'public', 'index.html'), 'utf8');
-    const rendered = html.replace(/\{\{SITE_NAME\}\}/g, SITE_NAME);
+    const rendered = html
+      .replace(/\{\{SITE_NAME\}\}/g, SITE_NAME)
+      .replace(/\{\{TELEGRAM_USERNAME\}\}/g, TELEGRAM_USERNAME);
     res.type('html').send(rendered);
   } catch {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -131,7 +134,7 @@ app.get('/api/paypal-checkout', (req, res) => {
           createOrder: function(data, actions) {
             return actions.order.create({
               purchase_units: [{
-                description: '${safeName}',
+                description: 'Digital Ebook',
                 amount: { value: '${parseFloat(amount).toFixed(2)}', currency_code: '${currency}' }
               }],
               application_context: {
