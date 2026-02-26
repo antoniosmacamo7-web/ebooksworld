@@ -3,387 +3,125 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{SITE_NAME}} - Digital Ebooks & Guides</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
-      color: #e8e8e8;
-      min-height: 100vh;
-      line-height: 1.5;
-    }
-    header {
-      padding: 1.5rem 2rem;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-    .logo { font-size: 1.5rem; font-weight: 700; color: #4fc3f7; letter-spacing: -0.5px; }
-    .tagline { font-size: 0.85rem; color: #8b9dc3; margin-top: 0.25rem; }
-    main {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 3rem 2rem;
-    }
-    h1 {
-      font-size: 1.8rem;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-    }
-    .subtitle {
-      color: #8b9dc3;
-      margin-bottom: 1.5rem;
-      font-size: 1rem;
-    }
-    .payments {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.4rem 0.75rem;
-      border-radius: 999px;
-      background: rgba(0,112,186,0.15);
-      border: 1px solid rgba(0,112,186,0.4);
-      color: #cfd8dc;
-      font-size: 0.8rem;
-      margin-bottom: 2rem;
-    }
-    .payments-logo {
-      font-weight: 700;
-      letter-spacing: -0.3px;
-      color: #ffb300;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 1.5rem;
-    }
-    .card {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 1.5rem;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-    .card:hover {
-      border-color: rgba(79,195,247,0.3);
-      transform: translateY(-2px);
-    }
-    .card-icon {
-      width: 48px;
-      height: 48px;
-      background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-    }
-    .card h3 { font-size: 1.1rem; margin-bottom: 0.4rem; color: #fff; }
-    .card p { font-size: 0.85rem; color: #aab; margin-bottom: 0.75rem; }
-    .card .price { font-size: 1.1rem; font-weight: 700; color: #4fc3f7; display: block; margin-bottom: 0.75rem; }
-    .card .cta {
-      margin-top: 0.25rem;
-    }
-    .paypal-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      width: 100%;
-      padding: 0.55rem 0.9rem;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 600;
-      background: linear-gradient(135deg, #0070ba 0%, #1546a0 100%);
-      color: #fff;
-      box-shadow: 0 6px 18px rgba(0,112,186,0.45);
-      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-    }
-    .paypal-button span.logo {
-      font-weight: 700;
-      letter-spacing: -0.2px;
-    }
-    .paypal-button span.logo-highlight {
-      color: #ffb300;
-    }
-    .paypal-button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 24px rgba(0,112,186,0.6);
-      background: linear-gradient(135deg, #0083d0 0%, #1852b0 100%);
-    }
-    .paypal-button:active {
-      transform: translateY(0);
-      box-shadow: 0 4px 14px rgba(0,112,186,0.5);
-    }
-    .status-banner {
-      margin-bottom: 1.5rem;
-      padding: 0.75rem 1rem;
-      border-radius: 10px;
-      font-size: 0.85rem;
-      line-height: 1.4;
-    }
-    .status-banner.success {
-      background: rgba(56, 142, 60, 0.12);
-      border: 1px solid rgba(56, 142, 60, 0.4);
-      color: #c8e6c9;
-    }
-    .status-banner.error {
-      background: rgba(229, 57, 53, 0.12);
-      border: 1px solid rgba(229, 57, 53, 0.4);
-      color: #ffcdd2;
-    }
-    footer {
-      text-align: center;
-      padding: 2rem;
-      color: #6b7a99;
-      font-size: 0.85rem;
-    }
-  </style>
+  <title>Books Market - Digital Ebooks</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>
-    <div class="logo">{{SITE_NAME}}</div>
-    <div class="tagline">Digital ebooks & guides for personal growth</div>
-  </header>
-  <main>
-    <h1>Popular Ebooks</h1>
-    <p class="subtitle">Instant download • PDF & EPUB • Best sellers</p>
-    <div id="status-banner" class="status-banner" style="display:none;"></div>
-    <div class="payments">
-      <span>Secure payments processed by</span>
-      <span class="payments-logo">Pay<span style="color:#0070ba;">Pal</span></span>
-    </div>
-    <div class="grid">
-      <div class="card" data-name="Personal Development Ebook" data-price="25">
-        <div class="card-icon">📚</div>
+
+<header>
+  <div class="container header-container">
+    <div class="logo">Books Market</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="index.html#ebooks">Ebooks</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1>Premium Digital Ebooks</h1>
+    <p>Instant download • PDF & EPUB • Professional Guides</p>
+  </div>
+</section>
+
+<main id="ebooks" class="container">
+
+  <div class="grid">
+
+    <div class="card">
+      <img src="./assets/master.png" alt="Personal Development Ebook">
+      <div class="card-content">
         <h3>Personal Development Ebook</h3>
-        <p>Master your habits and achieve your goals. Bestseller with 50+ actionable strategies.</p>
-        <span class="price">$25</span>
-        <div class="cta">
-          <button class="paypal-button">
-            <span>Buy with</span>
-            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
-          </button>
-        </div>
-      </div>
-      <div class="card" data-name="Financial Freedom Ebook" data-price="30">
-        <div class="card-icon">💰</div>
-        <h3>Financial Freedom Ebook</h3>
-        <p>Build wealth step by step. Passive income, budgeting, and investment basics.</p>
-        <span class="price">$30</span>
-        <div class="cta">
-          <button class="paypal-button">
-            <span>Buy with</span>
-            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
-          </button>
-        </div>
-      </div>
-      <div class="card" data-name="Digital Marketing Guide" data-price="35">
-        <div class="card-icon">📈</div>
-        <h3>Digital Marketing Guide</h3>
-        <p>SEO, social media, and email marketing. Everything you need to grow online.</p>
-        <span class="price">$35</span>
-        <div class="cta">
-          <button class="paypal-button">
-            <span>Buy with</span>
-            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
-          </button>
-        </div>
-      </div>
-      <div class="card" data-name="Health & Wellness Ebook" data-price="40">
-        <div class="card-icon">🧘</div>
-        <h3>Health & Wellness Ebook</h3>
-        <p>Nutrition, fitness, and mindfulness. Your complete wellness roadmap.</p>
-        <span class="price">$40</span>
-        <div class="cta">
-          <button class="paypal-button">
-            <span>Buy with</span>
-            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
-          </button>
-        </div>
-      </div>
-      <div class="card" data-name="Productivity Masterclass" data-price="45">
-        <div class="card-icon">⚡</div>
-        <h3>Productivity Masterclass</h3>
-        <p>2x your output. Time management, focus, and workflow optimization.</p>
-        <span class="price">$45</span>
-        <div class="cta">
-          <button class="paypal-button">
-            <span>Buy with</span>
-            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
-          </button>
-        </div>
-      </div>
-      <div class="card" data-name="Mindfulness & Meditation Guide" data-price="55">
-        <div class="card-icon">🧠</div>
-        <h3>Mindfulness & Meditation Guide</h3>
-        <p>Reduce stress and improve clarity. Simple techniques for busy lives.</p>
-        <span class="price">$55</span>
-        <div class="cta">
-          <button class="paypal-button">
-            <span>Buy with</span>
-            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
-          </button>
-        </div>
-      </div>
-      <div class="card" data-name="Entrepreneurship Blueprint" data-price="60">
-        <div class="card-icon">🚀</div>
-        <h3>Entrepreneurship Blueprint</h3>
-        <p>Start and scale your business. From idea to launch in 90 days.</p>
-        <span class="price">$60</span>
-        <div class="cta">
-          <button class="paypal-button">
-            <span>Buy with</span>
-            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
-          </button>
-        </div>
-      </div>
-      <!-- Extra ebooks -->
-      <div class="card" data-name="AI & Automation Playbook" data-price="65">
-        <div class="card-icon">🤖</div>
-        <h3>AI & Automation Playbook</h3>
-        <p>Learn how to use AI tools to automate work, save time, and boost your income.</p>
-        <span class="price">$65</span>
-        <div class="cta">
-          <button class="paypal-button">
-            <span>Buy with</span>
-            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
-          </button>
-        </div>
-      </div>
-      <div class="card" data-name="Crypto & Web3 Starter Kit" data-price="60">
-        <div class="card-icon">🪙</div>
-        <h3>Crypto & Web3 Starter Kit</h3>
-        <p>Understand blockchain, NFTs, and DeFi with simple explanations and step-by-step guides.</p>
-        <span class="price">$60</span>
-        <div class="cta">
-          <button class="paypal-button">
-            <span>Buy with</span>
-            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
-          </button>
-        </div>
-      </div>
-      <div class="card" data-name="High Ticket Sales Scripts" data-price="65">
-        <div class="card-icon">📞</div>
-        <h3>High Ticket Sales Scripts</h3>
-        <p>Ready-to-use scripts and templates to close high-ticket clients in chat or call.</p>
-        <span class="price">$65</span>
-        <div class="cta">
-          <button class="paypal-button">
-            <span>Buy with</span>
-            <span class="logo">Pay<span class="logo-highlight">Pal</span></span>
+        <p>Build powerful habits and achieve long-term success with structured strategies.</p>
+        <div class="card-bottom">
+          <span class="price">$25</span>
+          <button class="paypal-btn">
+            Pay
+            <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal">
           </button>
         </div>
       </div>
     </div>
-  </main>
-  <footer>
-    © {{SITE_NAME}}. Digital products. All rights reserved.
-  </footer>
-  <script>
-    (function() {
-      // Será substituído no servidor pelo valor do .env (TELEGRAM_USERNAME)
-      var TELEGRAM_USERNAME = '{{TELEGRAM_USERNAME}}' || '';
 
-      function parseStatusFromUrl() {
-        try {
-          var params = new URLSearchParams(window.location.search || '');
-          return {
-            status: params.get('status'),
-            productName: params.get('product_name'),
-            amount: params.get('amount')
-          };
-        } catch (e) {
-          return { status: null, productName: null, amount: null };
-        }
-      }
+    <div class="card">
+      <img src="./assets/finacial.png" alt="Financial Freedom Ebook">
+      <div class="card-content">
+        <h3>Financial Freedom Ebook</h3>
+        <p>Step-by-step guide to wealth building, investing and smart budgeting.</p>
+        <div class="card-bottom">
+          <span class="price">$30</span>
+          <button class="paypal-btn">
+            Pay
+            <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal">
+          </button>
+        </div>
+      </div>
+    </div>
 
-      function redirectToTelegram(info) {
-        if (!TELEGRAM_USERNAME || info.status !== 'success') return;
+    <div class="card">
+      <img src="./assets/digital.png" alt="Digital Marketing Guide">
+      <div class="card-content">
+        <h3>Digital Marketing Guide</h3>
+        <p>SEO, paid traffic and branding strategies for modern online business.</p>
+        <div class="card-bottom">
+          <span class="price">$35</span>
+          <button class="paypal-btn">
+            Pay
+            <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal">
+          </button>
+        </div>
+      </div>
+    </div>
 
-        var name = info.productName || 'Digital Ebook';
-        var amount = info.amount || '';
+    <div class="card">
+      <img src="./assets/blueprint.png" alt="Entrepreneurship Blueprint">
+      <div class="card-content">
+        <h3>Entrepreneurship Blueprint</h3>
+        <p>Launch and scale your business with a structured 90-day roadmap.</p>
+        <div class="card-bottom">
+          <span class="price">$60</span>
+          <button class="paypal-btn">
+            Pay
+            <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal">
+          </button>
+        </div>
+      </div>
+    </div>
 
-        var lines = [
-          '🎉 Payment successful!',
-          '',
-          '✅ Product: ' + name,
-          amount ? '💰 Amount: $' + amount : '',
-          '',
-          'Please provide me access to the product.'
-        ].filter(Boolean);
+  </div>
 
-        var text = lines.join('\n');
-        var url = 'https://t.me/' + TELEGRAM_USERNAME.replace('@', '') + '?text=' + encodeURIComponent(text);
+</main>
 
-        // Pequena pausa para o usuário ver o banner antes de ir para o Telegram
-        setTimeout(function() {
-          window.location.href = url;
-        }, 800);
-      }
+<footer>
+  <div class="container footer-container">
+    
+    <div class="footer-column">
+      <h4>Books Market</h4>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact</a>
+    </div>
 
-      function showStatusBanner() {
-        var info = parseStatusFromUrl();
-        var status = info.status;
-        var banner = document.getElementById('status-banner');
-        if (!banner || !status) return;
+    <div class="footer-column">
+      <h4>Support</h4>
+      <a href="#">FAQ</a>
+      <a href="#">Refund Policy</a>
+    </div>
 
-        if (status === 'success') {
-          banner.textContent = 'Payment completed successfully. You will now be redirected to Telegram to confirm your order.';
-          banner.classList.add('success');
-          banner.style.display = 'block';
-          redirectToTelegram(info);
-        } else if (status === 'cancel') {
-          banner.textContent = 'Payment was cancelled. You can try again at any time.';
-          banner.classList.add('error');
-          banner.style.display = 'block';
-        }
-      }
+    <div class="footer-column">
+      <h4>Legal</h4>
+      <a href="#">Terms of Service</a>
+      <a href="#">Privacy Policy</a>
+    </div>
 
-      function buildCheckoutUrl(price, name) {
-        var origin = window.location.origin;
-        var path = window.location.pathname || '/';
-        var baseReturn = origin + path;
+  </div>
 
-        // Inclui o nome do produto e o valor na URL de retorno
-        var successUrl = baseReturn
-          + '?status=success'
-          + '&product_name=' + encodeURIComponent(name || 'Digital Ebook')
-          + '&amount=' + encodeURIComponent(String(price));
+  <div class="footer-bottom">
+    © 2026 Books Market. All rights reserved.
+  </div>
+</footer>
 
-        var cancelUrl = baseReturn + '?status=cancel';
-
-        var params = new URLSearchParams();
-        params.set('amount', String(price));
-        params.set('currency', 'USD');
-        params.set('success_url', successUrl);
-        params.set('cancel_url', cancelUrl);
-        params.set('product_name', name || 'Digital Ebook');
-
-        return '/api/paypal-checkout?' + params.toString();
-      }
-
-      function attachPayPalHandlers() {
-        var cards = document.querySelectorAll('.card');
-        cards.forEach(function(card) {
-          var button = card.querySelector('.paypal-button');
-          if (!button) return;
-
-          button.addEventListener('click', function() {
-            var name = card.getAttribute('data-name') || 'Digital Ebook';
-            var price = card.getAttribute('data-price');
-            if (!price) return;
-            var url = buildCheckoutUrl(price, name);
-            window.location.href = url;
-          });
-        });
-      }
-
-      showStatusBanner();
-      attachPayPalHandlers();
-    })();
-  </script>
 </body>
 </html>
