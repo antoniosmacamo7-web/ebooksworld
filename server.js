@@ -147,7 +147,12 @@ app.get('/api/paypal-checkout', (req, res) => {
           onApprove: function(data, actions) {
             return actions.order.capture().then(function(details) {
               var sep = SUCCESS_URL.indexOf('?') >= 0 ? '&' : '?';
-              window.location.href = SUCCESS_URL + sep + 'order_id=' + data.orderID + '&payer_id=' + (details.payer && details.payer.payer_id ? details.payer.payer_id : '');
+              var email = (details.payer && details.payer.email_address) ? encodeURIComponent(details.payer.email_address) : '';
+              var firstName = (details.payer && details.payer.name && details.payer.name.given_name) ? details.payer.name.given_name : '';
+              var lastName = (details.payer && details.payer.name && details.payer.name.surname) ? details.payer.name.surname : '';
+              var fullName = encodeURIComponent((firstName + ' ' + lastName).trim());
+              var payerId = (details.payer && details.payer.payer_id) ? details.payer.payer_id : '';
+              window.location.href = SUCCESS_URL + sep + 'order_id=' + data.orderID + '&payer_id=' + payerId + '&buyer_email=' + email + '&buyer_name=' + fullName;
             });
           },
           onCancel: function() { window.location.href = CANCEL_URL; },
