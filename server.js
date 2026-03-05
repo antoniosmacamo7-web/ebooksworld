@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 3001;
-const SITE_NAME = 'Ebooks Sales';
+const SITE_NAME = process.env.SITE_NAME || 'EbookStore';
 const TELEGRAM_USERNAME = process.env.TELEGRAM_USERNAME || '';
 
 app.use(express.json());
