@@ -10,6 +10,6 @@ services:
       - key: SITE_NAME
         sync: false
         # Defina no painel Render, ex: "Readify Books" ou o nome que preferir
-      - key: PAYPAL_CLIENT_ID
+      - key: PAYJSR_SECRET_KEY
         sync: false
-        # Mesmo Client ID do PayPal usado no VideosPlus
+        # PayJSR secret key (sk_live_... ou sk_test_...)

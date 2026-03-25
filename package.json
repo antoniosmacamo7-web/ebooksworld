@@ -2,7 +2,7 @@
   "name": "ebooks-checkout",
   "version": "1.0.0",
   "type": "module",
-  "description": "Ebooks store - PayPal checkout front",
+  "description": "Ebooks store - PayJSR checkout front",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

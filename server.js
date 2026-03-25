@@ -28,34 +28,87 @@ app.get('/', (req, res) => {
 // Arquivos estáticos (CSS, imagens, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// PayPal Checkout - máscara para o checkout (PayPal vê este domínio como merchant)
-app.get('/api/paypal-checkout', (req, res) => {
+// Checkout PayJSR (mantém rota /api/paypal-checkout por compatibilidade com VideosPlus)
+app.get('/api/paypal-checkout', async (req, res) => {
   try {
-    const { amount, currency = 'USD', video_id, success_url, cancel_url, product_name } = req.query;
+    const { amount, currency = 'USD', success_url, cancel_url, product_name } = req.query;
 
     if (!amount || !success_url || !cancel_url) {
       return res.status(400).send('Missing required parameters');
     }
 
-    const paypalClientId = process.env.PAYPAL_CLIENT_ID;
-    if (!paypalClientId) {
-      return res.status(500).send('PayPal Client ID not configured. Set PAYPAL_CLIENT_ID in Render.');
+    const payjsrSecretKey = process.env.PAYJSR_SECRET_KEY;
+    if (!payjsrSecretKey) {
+      return res.status(500).send('PayJSR secret key not configured. Set PAYJSR_SECRET_KEY in Render.');
     }
 
-    const isSandbox = paypalClientId.includes('sandbox') || paypalClientId.includes('test');
-    const paypalScriptUrl = `https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=USD`;
+    const amountNumber = Number(amount);
+    if (!Number.isFinite(amountNumber) || amountNumber <= 0) {
+      return res.status(400).send('Invalid amount');
+    }
+
+    // PayJSR expects amount in cents
+    const amountCents = Math.round(amountNumber * 100);
+    if (amountCents < 100) {
+      return res.status(400).send('Amount too small (minimum is $1.00)');
+    }
 
     res.setHeader('Referrer-Policy', 'no-referrer');
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Robots-Tag', 'noindex, nofollow');
 
     const displayName = product_name || 'Digital Ebook';
-    const escapeForJs = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/`/g, '\\`').replace(/\r/g, '').replace(/\n/g, '');
-    const safeName = escapeForJs(displayName);
-    const safeSuccess = escapeForJs(success_url);
-    const safeCancel = escapeForJs(cancel_url);
-    const safeBrand = escapeForJs(SITE_NAME);
+    const escapeForJs = (s) =>
+      String(s || '')
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/`/g, '\\`')
+        .replace(/\r/g, '')
+        .replace(/\n/g, '');
 
+    const origin = `${req.protocol}://${req.get('host')}`;
+    const forwardSuccess = String(success_url);
+    const successIntermediate = `${origin}/api/payjsr-success?forward=${encodeURIComponent(forwardSuccess)}`;
+
+    const payload = {
+      amount: amountCents,
+      currency: String(currency || 'USD').toUpperCase(),
+      description: displayName,
+      billing_type: 'one_time',
+      mode: 'redirect',
+      success_url: successIntermediate,
+      cancel_url: String(cancel_url),
+      metadata: {
+        product_name: String(displayName),
+      },
+    };
+
+    // Create PayJSR payment
+    const createRes = await fetch('https://api.payjsr.com/v1/api-create-payment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': payjsrSecretKey,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const createData = await createRes.json().catch(() => ({}));
+    if (!createRes.ok) {
+      return res.status(createRes.status).send(
+        `Checkout failed (PayJSR): ${createData?.error || createData?.message || 'unknown error'}`,
+      );
+    }
+
+    const paymentId = createData?.data?.payment_id || createData?.data?.paymentId || createData?.payment_id;
+    if (!paymentId) {
+      return res.status(502).send('Checkout failed (PayJSR): missing payment_id');
+    }
+
+    const safePaymentId = escapeForJs(paymentId);
+    const safeSiteName = escapeForJs(SITE_NAME);
+
+    // Open PayJSR checkout via JS SDK so we can persist `paymentId` in sessionStorage.
     res.send(`
 <!DOCTYPE html>
 <html lang="en">
@@ -64,7 +117,8 @@ app.get('/api/paypal-checkout', (req, res) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
-  <title>Checkout - ${SITE_NAME}</title>
+  <title>Checkout - ${safeSiteName}</title>
+  <script src="https://js.payjsr.com/v1/payjsr.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -84,91 +138,99 @@ app.get('/api/paypal-checkout', (req, res) => {
       max-width: 420px;
       width: 100%;
       border: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
     }
     .brand { font-size: 1.1rem; color: #8b9dc3; margin-bottom: 0.5rem; }
     h1 { font-size: 1.3rem; margin-bottom: 0.5rem; }
-    .product { color: #aab; font-size: 0.9rem; margin-bottom: 1rem; word-break: break-word; }
-    .amount { font-size: 2rem; font-weight: 700; color: #4fc3f7; margin-bottom: 1.5rem; text-align: center; }
-    #paypal-button-container { margin-top: 0.5rem; }
-    .loading { text-align: center; color: #888; margin-top: 0.5rem; font-size: 0.9rem; }
-    .security-notice {
-      margin-top: 1rem;
-      padding: 0.75rem;
-      background: rgba(79,195,247,0.1);
-      border-left: 3px solid #4fc3f7;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      color: #aab;
-      line-height: 1.4;
-    }
-    .security-notice strong { color: #8b9dc3; }
+    .loading { color: #888; margin-top: 0.9rem; font-size: 0.95rem; }
   </style>
-  <script>
-    (function(){
-      if (window.history && window.history.replaceState) window.history.replaceState(null,null,window.location.href);
-      try { sessionStorage.removeItem('origin'); localStorage.removeItem('origin'); } catch(e){}
-    })();
-  </script>
-  <script src="${paypalScriptUrl}" data-namespace="paypal_sdk" referrerpolicy="no-referrer"></script>
 </head>
 <body>
   <div class="container">
-    <div class="brand">${SITE_NAME}</div>
+    <div class="brand">${safeSiteName}</div>
     <h1>Complete Your Purchase</h1>
-    <div class="product">${safeName}</div>
-    <div class="amount">$${parseFloat(amount).toFixed(2)} ${currency}</div>
-    <div id="paypal-button-container"></div>
-    <div class="loading" id="loading">Loading PayPal...</div>
-    <div class="security-notice">
-      <strong>Security Notice:</strong> For security reasons, the payment may appear under a different merchant name on your statement.
-    </div>
+    <div class="loading">Redirecting to PayJSR checkout…</div>
   </div>
   <script>
-    (function(){
-      var SUCCESS_URL = '${safeSuccess}';
-      var CANCEL_URL = '${safeCancel}';
-      function initPayPal(){
-        if (typeof paypal_sdk === 'undefined' || !paypal_sdk.Buttons) { setTimeout(initPayPal,100); return; }
-        document.getElementById('loading').style.display='none';
-        paypal_sdk.Buttons({
-          createOrder: function(data, actions) {
-            return actions.order.create({
-              purchase_units: [{
-                description: 'Digital Ebook',
-                amount: { value: '${parseFloat(amount).toFixed(2)}', currency_code: '${currency}' }
-              }],
-              application_context: {
-                brand_name: '${safeBrand}',
-                landing_page: 'NO_PREFERENCE',
-                user_action: 'PAY_NOW'
-              }
-            });
-          },
-          onApprove: function(data, actions) {
-            return actions.order.capture().then(function(details) {
-              var sep = SUCCESS_URL.indexOf('?') >= 0 ? '&' : '?';
-              var email = (details.payer && details.payer.email_address) ? encodeURIComponent(details.payer.email_address) : '';
-              var firstName = (details.payer && details.payer.name && details.payer.name.given_name) ? details.payer.name.given_name : '';
-              var lastName = (details.payer && details.payer.name && details.payer.name.surname) ? details.payer.name.surname : '';
-              var fullName = encodeURIComponent((firstName + ' ' + lastName).trim());
-              var payerId = (details.payer && details.payer.payer_id) ? details.payer.payer_id : '';
-              window.location.href = SUCCESS_URL + sep + 'order_id=' + data.orderID + '&payer_id=' + payerId + '&buyer_email=' + email + '&buyer_name=' + fullName;
-            });
-          },
-          onCancel: function() { window.location.href = CANCEL_URL; },
-          onError: function(err) { console.error(err); alert('Payment error. Please try again.'); },
-          style: { layout: 'vertical', color: 'blue', shape: 'rect', label: 'paypal' }
-        }).render('#paypal-button-container');
+    (function () {
+      try {
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState(null, null, window.location.href);
+        }
+      } catch (e) {}
+
+      // Persist payment id so /api/payjsr-success can append it to the original success_url.
+      try {
+        sessionStorage.setItem('payjsr_payment_id', '${safePaymentId}');
+      } catch (e) {}
+
+      // Open checkout. Redirect mode will send the buyer to success/cancel URLs.
+      if (typeof PayJSR !== 'undefined' && PayJSR.openCheckout) {
+        PayJSR.openCheckout('${safePaymentId}');
+      } else {
+        // Fallback: retry shortly if SDK isn't ready yet
+        setTimeout(function () {
+          if (typeof PayJSR !== 'undefined' && PayJSR.openCheckout) {
+            PayJSR.openCheckout('${safePaymentId}');
+          }
+        }, 300);
       }
-      initPayPal();
     })();
   </script>
 </body>
 </html>
     `);
   } catch (err) {
-    console.error('PayPal checkout error:', err);
+    console.error('PayJSR checkout error:', err);
     res.status(500).send('Checkout failed');
+  }
+});
+
+// Intermediary success page to forward to the original `success_url`
+app.get('/api/payjsr-success', (req, res) => {
+  try {
+    const forward = String(req.query.forward || '');
+    if (!forward) {
+      return res.status(400).send('Missing forward URL');
+    }
+
+    res.setHeader('Referrer-Policy', 'no-referrer');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+
+    res.send(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>Processing…</title>
+</head>
+<body>
+  <script>
+    (function () {
+      var forwardUrl = ${JSON.stringify(forward)};
+      var paymentId = null;
+      try { paymentId = sessionStorage.getItem('payjsr_payment_id'); } catch (e) {}
+
+      var hasQuery = forwardUrl.indexOf('?') >= 0;
+      var sep = hasQuery ? '&' : '?';
+
+      if (paymentId) {
+        window.location.href = forwardUrl + sep + 'order_id=' + encodeURIComponent(paymentId);
+      } else {
+        // If we lost sessionStorage for some reason, still forward.
+        window.location.href = forwardUrl;
+      }
+    })();
+  </script>
+</body>
+</html>
+    `);
+  } catch (err) {
+    console.error('PayJSR success forward error:', err);
+    res.status(500).send('Forward failed');
   }
 });
 
